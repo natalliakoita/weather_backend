@@ -2,9 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/natalliakoita/weather_backend/service"
 )
 
@@ -22,7 +24,12 @@ func NewApiHandler(d service.DbServiceInterface, a service.ApiServiceInterface) 
 }
 
 func (u *ApiHandler) GetWeatherByCity(w http.ResponseWriter, req *http.Request) {
-	city := "Barcelona"
+	vars := mux.Vars(req)
+	city, ok := vars["city"]
+	if !ok {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	resp, err := u.apiSvc.GetWheater(city)
 	if err != nil {
@@ -52,13 +59,12 @@ func (u *ApiHandler) GetWeatherByCity(w http.ResponseWriter, req *http.Request) 
 }
 
 type GetWeatherResponse struct {
-	ID          int       `json:"id"`
+	ID          int       `json:"id,omitempty"`
 	City        string    `json:"city"`
 	TimeStamp   time.Time `json:"dt"`
 	Temperature float32   `json:"temperature"`
 }
 
-// write web response to client
 func (c GetWeatherResponse) writeToWeb(w http.ResponseWriter) error {
 	b, err := json.Marshal(c)
 	if err != nil {
@@ -69,4 +75,50 @@ func (c GetWeatherResponse) writeToWeb(w http.ResponseWriter) error {
 		return err
 	}
 	return nil
+}
+
+type Weather struct {
+	City        string    `json:"city"`
+	TimeStamp   time.Time `json:"dt"`
+	Temperature float32   `json:"temperature"`
+}
+
+type WeatherListResponse struct {
+	Cities []Weather `json:"cities"`
+}
+
+func (c WeatherListResponse) writeToWeb(w http.ResponseWriter) {
+	b, err := json.Marshal(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Header().Add("Content-Type", "application/json")
+	if _, err := w.Write(b); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (u *ApiHandler) WeatherListRequest(w http.ResponseWriter, req *http.Request) {
+	cities, err := u.dbSvc.GetListWeatherRequest()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	response := []Weather{}
+	for _, city := range cities {
+		q := Weather{}
+		q.City = city.City
+		q.TimeStamp = city.TimeStamp
+		q.Temperature = city.Temperature
+
+		response = append(response, q)
+	}
+
+	resp := WeatherListResponse{}
+	resp.Cities = response
+
+	resp.writeToWeb(w)
+
+	w.WriteHeader(http.StatusOK)
 }
