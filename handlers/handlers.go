@@ -44,7 +44,6 @@ func (u *ApiHandler) GetWeatherByCity(w http.ResponseWriter, req *http.Request) 
 	}
 
 	result := GetWeatherResponse{
-		ID:          resp.ID,
 		City:        resp.City,
 		TimeStamp:   resp.TimeStamp,
 		Temperature: resp.Temperature,
@@ -59,7 +58,6 @@ func (u *ApiHandler) GetWeatherByCity(w http.ResponseWriter, req *http.Request) 
 }
 
 type GetWeatherResponse struct {
-	ID          int       `json:"id,omitempty"`
 	City        string    `json:"city"`
 	TimeStamp   time.Time `json:"dt"`
 	Temperature float32   `json:"temperature"`
@@ -77,14 +75,8 @@ func (c GetWeatherResponse) writeToWeb(w http.ResponseWriter) error {
 	return nil
 }
 
-type Weather struct {
-	City        string    `json:"city"`
-	TimeStamp   time.Time `json:"dt"`
-	Temperature float32   `json:"temperature"`
-}
-
 type WeatherListResponse struct {
-	Cities []Weather `json:"cities"`
+	Cities []GetWeatherResponse `json:"cities"`
 }
 
 func (c WeatherListResponse) writeToWeb(w http.ResponseWriter) {
@@ -105,9 +97,9 @@ func (u *ApiHandler) WeatherListRequest(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	response := []Weather{}
+	response := []GetWeatherResponse{}
 	for _, city := range cities {
-		q := Weather{}
+		q := GetWeatherResponse{}
 		q.City = city.City
 		q.TimeStamp = city.TimeStamp
 		q.Temperature = city.Temperature
