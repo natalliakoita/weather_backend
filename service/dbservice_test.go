@@ -22,15 +22,6 @@ func (fake *FakeDatasource) GetListWeatherRequest() ([]models.Weather, error) {
 	return fake.MockGetListWeatherRequestFn()
 }
 
-func NewFakeDatasource() *FakeDatasource {
-	return &FakeDatasource{
-		MockAddWeatherFn: func(w models.Weather) error { return nil },
-		MockGetListWeatherRequestFn: func() ([]models.Weather, error) {
-			return []models.Weather{}, nil
-		},
-	}
-}
-
 func TestDbService_AddWeather(t *testing.T) {
 	type args struct {
 		w         models.Weather

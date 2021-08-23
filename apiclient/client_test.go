@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Example: https://dev.to/clavinjune/mocking-http-call-in-golang-15i5
+
 type HTTPClientMock struct {
 	DoFunc func(*http.Request) (*http.Response, error)
 }
