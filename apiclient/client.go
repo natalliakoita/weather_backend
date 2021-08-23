@@ -10,8 +10,20 @@ import (
 	"github.com/natalliakoita/weather_backend/models"
 )
 
+type HTTPClient interface {
+	Do(*http.Request) (*http.Response, error)
+}
+
+// type apiV1 struct {
+// 	// we need to put the http.Client here
+// 	// so we can mock it inside the unit test
+// 	c       HTTPClient
+// 	baseURL string
+// 	timeout time.Duration
+// }
+
 type ApiWeather struct {
-	Client *http.Client
+	Client HTTPClient
 	Key    string
 }
 
@@ -34,7 +46,13 @@ func (a ApiWeather) GetWheater(city string) (*models.WheatherApiResponse, error)
 	q.Set("appid", a.Key)
 	u.RawQuery = q.Encode()
 
-	resp, err := a.Client.Get(u.String())
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// client := http.Client{}
+	resp, err := a.Client.Do(req)
 	if err != nil {
 		return nil, err
 	}

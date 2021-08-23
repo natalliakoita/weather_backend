@@ -44,7 +44,7 @@ func NewDS(conn *sql.DB) DS {
 }
 
 func (ds *DS) AddWeather(w models.Weather) error {
-	insertStatement := "INSERT INTO public.weather (city, dt, temperature) VALUES($1, $2, $3)"
+	insertStatement := "INSERT INTO weather (city, dt, temperature) VALUES ($1, $2, $3)"
 
 	_, err := ds.DB.Exec(insertStatement, w.City, w.TimeStamp, w.Temperature)
 
@@ -54,17 +54,17 @@ func (ds *DS) AddWeather(w models.Weather) error {
 	return nil
 }
 
-func (ds *DS) GetListWeatherRequest() ([]Weather, error) {
-	getList := `SELECT "id", "city", "dt", "temperature" FROM  weather`
+func (ds *DS) GetListWeatherRequest() ([]models.Weather, error) {
+	getList := `SELECT id, city, dt, temperature FROM  weather`
 	rows, err := ds.DB.Query(getList)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	ws := []Weather{}
+	ws := []models.Weather{}
 	for rows.Next() {
-		w := Weather{}
+		w := models.Weather{}
 		err := rows.Scan(&w.ID, &w.City, &w.TimeStamp, &w.Temperature)
 		if err != nil {
 			fmt.Println(err)
@@ -78,5 +78,5 @@ func (ds *DS) GetListWeatherRequest() ([]Weather, error) {
 
 type DSWeatherInterface interface {
 	AddWeather(w models.Weather) error
-	GetListWeatherRequest() ([]Weather, error)
+	GetListWeatherRequest() ([]models.Weather, error)
 }
