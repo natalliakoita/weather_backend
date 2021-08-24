@@ -60,7 +60,7 @@ func TestApiHandler_GetWeatherByCity(t *testing.T) {
 		statusCode int
 	}{
 		{
-			name: "test 1",
+			name: "succses call",
 			args: args{
 				city:        "Minsk",
 				testWeather: MockWeatherModel(),
@@ -71,7 +71,7 @@ func TestApiHandler_GetWeatherByCity(t *testing.T) {
 			statusCode: http.StatusOK,
 		},
 		{
-			name: "test 2",
+			name: "some error api",
 			args: args{
 				city:   "Minsk",
 				apiErr: errors.New("a some err"),
@@ -80,7 +80,7 @@ func TestApiHandler_GetWeatherByCity(t *testing.T) {
 			statusCode: http.StatusInternalServerError,
 		},
 		{
-			name: "test 3",
+			name: "some error db",
 			args: args{
 				city:   "Minsk",
 				testWeather: MockWeatherModel(),
@@ -90,7 +90,7 @@ func TestApiHandler_GetWeatherByCity(t *testing.T) {
 			statusCode: http.StatusInternalServerError,
 		},
 		{
-			name: "test 4",
+			name: "bad request",
 			args: args{
 				city:   "",
 			},
@@ -102,7 +102,6 @@ func TestApiHandler_GetWeatherByCity(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			fakeDbSVC := &FakeDbSVC{
 				MockAddWeatherFn: func(models.Weather) error { return tt.args.dbErr },
-				// MockGetListWeatherRequestFn: func() ([]models.Weather, error) { return tt.args.weatherList, tt.args.dbErr },
 			}
 
 			fakeApiSVC := &FakeApiSVC{
@@ -167,7 +166,7 @@ func TestApiHandler_WeatherListRequest(t *testing.T) {
 		statusCode int
 	}{
 		{
-			name: "test 1",
+			name: "succses call",
 			args: args{
 				dbErr:       nil,
 				weatherList: []models.Weather{
@@ -178,7 +177,7 @@ func TestApiHandler_WeatherListRequest(t *testing.T) {
 			statusCode: http.StatusOK,
 		},
 		{
-			name: "test 2",
+			name: "some error",
 			args: args{
 				dbErr: errors.New("a some err"),
 			},

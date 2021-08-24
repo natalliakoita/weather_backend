@@ -6,7 +6,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/natalliakoita/weather_backend/models"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,8 +25,6 @@ func TestApiWeather_GetWheater(t *testing.T) {
 	}
 	type args struct {
 		city     string
-		httpResp *http.Response
-		httpErr  error
 	}
 	tests := []struct {
 		name       string
@@ -35,58 +32,56 @@ func TestApiWeather_GetWheater(t *testing.T) {
 		Body       string
 		StatusCode int
 		args       args
-		want       *models.WheatherApiResponse
 		wantErr    bool
 	}{
 		{
-			name: "test 1",
-			fields: fields{
-				Key: "test",
-			},
+			name:   "no error",
+			fields: fields{Key: "test"},
 			Body: `{
-				"coord": {
-				  "lon": -0.1257,
-				  "lat": 51.5085
-				},
-				"weather": [
-				  {
-					"id": 802,
-					"main": "Clouds",
-					"description": "scattered clouds",
-					"icon": "03d"
-				  }
-				],
-				"base": "stations",
-				"main": {
-				  "temp": 293.55,
-				  "feels_like": 293.29,
-				  "temp_min": 291.48,
-				  "temp_max": 295.2,
-				  "pressure": 1011,
-				  "humidity": 63
-				},
-				"visibility": 10000,
-				"wind": {
-				  "speed": 6.69,
-				  "deg": 240
-				},
-				"clouds": {
-				  "all": 26
-				},
-				"dt": 1629047290,
-				"sys": {
-				  "type": 2,
-				  "id": 2006068,
-				  "country": "GB",
-				  "sunrise": 1629002776,
-				  "sunset": 1629055436
-				},
-				"timezone": 3600,
-				"id": 2643743,
-				"name": "London",
-				"cod": 200
-			  }`,
+						"coord": {
+						  "lon": -0.1257,
+						  "lat": 51.5085
+						},
+						"weather": [
+						  {
+							"id": 802,
+							"main": "Clouds",
+							"description": "scattered clouds",
+							"icon": "03d"
+						  }
+						],
+						"base": "stations",
+						"main": {
+						  "temp": 293.55,
+						  "feels_like": 293.29,
+						  "temp_min": 291.48,
+						  "temp_max": 295.2,
+						  "pressure": 1011,
+						  "humidity": 63
+						},
+						"visibility": 10000,
+						"wind": {
+						  "speed": 6.69,
+						  "deg": 240
+						},
+						"clouds": {
+						  "all": 26
+						},
+						"dt": 1629047290,
+						"sys": {
+						  "type": 2,
+						  "id": 2006068,
+						  "country": "GB",
+						  "sunrise": 1629002776,
+						  "sunset": 1629055436
+						},
+						"timezone": 3600,
+						"id": 2643743,
+						"name": "London",
+						"cod": 200
+					}`,
 			StatusCode: 200,
+			args:       args{},
 			wantErr:    false,
 		},
 		{

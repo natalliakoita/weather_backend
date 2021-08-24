@@ -14,14 +14,6 @@ type HTTPClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
 
-// type apiV1 struct {
-// 	// we need to put the http.Client here
-// 	// so we can mock it inside the unit test
-// 	c       HTTPClient
-// 	baseURL string
-// 	timeout time.Duration
-// }
-
 type ApiWeather struct {
 	Client HTTPClient
 	Key    string
@@ -51,7 +43,6 @@ func (a ApiWeather) GetWheater(city string) (*models.WheatherApiResponse, error)
 		return nil, err
 	}
 
-	// client := http.Client{}
 	resp, err := a.Client.Do(req)
 	if err != nil {
 		return nil, err
